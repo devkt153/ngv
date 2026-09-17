@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"C:\\Users\\user\\my-project\\ngv\\.claude\\hooks\\log_user_prompt.py\"",
+            "shell": "bash"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"C:\\Users\\user\\my-project\\ngv\\.claude\\hooks\\log_assistant_response.py\"",
+            "shell": "bash"
+          }
+        ]
+      }
+    ]
+  }
+}
