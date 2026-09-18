@@ -1,0 +1,17 @@
+sequenceDiagram
+  participant V as Vehicle
+  participant IV as CMP-001 InputValidator
+  participant AR as CMP-002 DoorLockArbiter
+  participant CH as CMP-002a CrashReleaseHandler
+  participant SF as CMP-002b SensorFaultHandler
+  participant AH as CMP-002c ApproachRiskHandler
+  participant OP as CMP-003 OutputPublisher
+  V->>IV: rear_left_approach_risk=TRUE (OEM-IF-003)
+  IV->>AR: getValidatedSignal()
+  AR->>CH: tryHandle(...)
+  CH-->>AR: handled=false
+  AR->>SF: tryHandle(...)
+  SF-->>AR: handled=false (sensor_fault=false)
+  AR->>AH: tryHandle(...)
+  AH-->>AR: handled=true, LEFT=LOCK, reason=SUPPRESSED_APPROACH_RISK [SWR-005/006/009]
+  AR->>OP: publish(decision)

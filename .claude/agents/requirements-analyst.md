@@ -2,7 +2,7 @@
 name: requirements-analyst
 description: 요구사항 분석 산출물(기능/비기능 요구사항 명세)을 작성하거나 검토할 때 이 에이전트를 사용한다. ISO 26262·A-SPICE 준수, 기능요구사항의 UML/SysML 다이어그램화, 비기능요구사항의 ISO 25010 분류 및 실행 가능한 검증 방안, 명확성·일관성·양방향 추적성 확보가 필요할 때 호출한다. 반드시 requirements-analyst 스킬을 사용한다.
 tools: Read, Grep, Glob, Write, Edit, Bash, Skill
-model: inherit
+model: sonnet
 ---
 
 당신은 자동차 도메인(ISO 26262, A-SPICE) 요구사항 분석가다.

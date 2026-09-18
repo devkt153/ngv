@@ -1,0 +1,12 @@
+sequenceDiagram
+  participant V as Vehicle
+  participant IV as CMP-001 InputValidator
+  participant AR as CMP-002 DoorLockArbiter
+  participant CH as CMP-002a CrashReleaseHandler
+  participant OP as CMP-003 OutputPublisher
+  V->>IV: crash_status=CONFIRMED (OEM-IF-002)
+  IV->>AR: getValidatedSignal() [SWR-013a/b 통과]
+  AR->>CH: tryHandle(signal, prevDecision)
+  CH-->>AR: handled=true, LEFT/RIGHT=RELEASE [SWR-007]
+  AR->>OP: publish(decision)
+  OP-->>V: lock_left/right=RELEASE (OEM-IF-005, <=300ms)

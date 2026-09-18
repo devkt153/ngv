@@ -1,0 +1,20 @@
+sequenceDiagram
+  participant V as Vehicle
+  participant IV as CMP-001 InputValidator
+  participant AR as CMP-002 DoorLockArbiter
+  participant CH as CMP-002a CrashReleaseHandler
+  participant SF as CMP-002b SensorFaultHandler
+  participant AH as CMP-002c ApproachRiskHandler
+  participant DH as CMP-002d DefaultHandler
+  participant OP as CMP-003 OutputPublisher
+  V->>IV: 정상 입력(위험 조건 없음)
+  IV->>AR: getValidatedSignal()
+  AR->>CH: tryHandle(...)
+  CH-->>AR: handled=false
+  AR->>SF: tryHandle(...)
+  SF-->>AR: handled=false
+  AR->>AH: tryHandle(...)
+  AH-->>AR: handled=false
+  AR->>DH: tryHandle(...)
+  DH-->>AR: handled=true, decision=prevDecision(직전 상태 유지)
+  AR->>OP: publish(decision)
