@@ -23,4 +23,4 @@ class IPriorityHandler(ABC):
         \\param previous 직전 평가주기의 확정 LockDecision.
         \\return handled=True면 decision이 완전히 채워짐, False면 decision=None.
         """
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover - 추상 계약, 구현체가 항상 override함

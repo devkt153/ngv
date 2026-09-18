@@ -67,7 +67,7 @@ jobs:
             --variable-naming-style=camelCase --argument-naming-style=camelCase \
             --attr-naming-style=camelCase \
             --function-rgx='^[a-z][a-zA-Z0-9]{2,}$' \
-            --method-rgx='^[a-z][a-zA-Z0-9]{2,}$' \
+            --method-rgx='^(__[a-z][a-zA-Z0-9]*__|[a-z][a-zA-Z0-9]{2,})$' \
             --variable-rgx='^[a-z][a-zA-Z0-9]{2,}$' \
             --argument-rgx='^[a-z][a-zA-Z0-9]{2,}$' \
             --attr-rgx='^[a-z][a-zA-Z0-9]{2,}$' \
@@ -87,7 +87,7 @@ jobs:
         env:
           PYTHONPATH: src
         run: |
-          coverage run --branch --source=childlock -m unittest discover -s tests/unit -v
+          coverage run --branch --source=childlock -m unittest discover -s tests -v
           coverage report -m --fail-under=100
 
       - name: No Python files yet

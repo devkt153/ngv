@@ -67,4 +67,6 @@ class DoorLockArbiter:
             if handlerResult.handled:
                 self.previousDecision = handlerResult.decision
                 return self.previousDecision
-        raise AssertionError("unreachable: defaultHandler must always handle")
+        raise AssertionError(  # pragma: no cover - defaultHandler 계약 위반 시에만 도달(방어적)
+            "unreachable: defaultHandler must always handle"
+        )

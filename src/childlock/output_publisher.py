@@ -21,7 +21,7 @@ class ActuatorPort(ABC):
         """!
         \\brief 좌/우 LockState를 액추에이터 모델에 반영한다.
         """
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover - 추상 계약, 구현체가 항상 override함
 
 
 class InMemoryActuatorPort(ActuatorPort):
