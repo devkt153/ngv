@@ -8,14 +8,12 @@ RawVehicleSignal(OEM-IF-002/003/009 대응)부터 ActuatorPort(OEM-IF-005 대응
 import unittest
 
 from childlock.door_lock_arbiter import DoorLockArbiter
-from childlock.handlers.approach_risk_handler import ApproachRiskHandler
 from childlock.handlers.crash_release_handler import CrashReleaseHandler
 from childlock.handlers.default_handler import DefaultHandler
-from childlock.handlers.sensor_fault_handler import SensorFaultHandler
-from childlock.input_validator import InputValidator
 from childlock.interfaces import IPriorityHandler
-from childlock.output_publisher import ActuatorPort, InMemoryActuatorPort, OutputPublisher
+from childlock.output_publisher import ActuatorPort, OutputPublisher
 from childlock.types import LockState, RawVehicleSignal, SystemState
+from tests.support.fixtures import RealChildlockWiring, makeFreshRawSignal
 
 
 class RaisingHandler(IPriorityHandler):
@@ -34,44 +32,18 @@ class RaisingActuatorPort(ActuatorPort):
         raise RuntimeError("simulated integration-level actuator failure")
 
 
-class ChildlockPipeline:
+class ChildlockPipeline(RealChildlockWiring):
     """!
     \\brief 통합시험용 조립 헬퍼 — 실제 7개 유닛을 SWA-001 통합 순서대로 배선한다(테스트 유틸리티).
+    공용 배선(RealChildlockWiring)을 상속해 tests/system과의 중복을 피한다.
     """
 
-    def __init__(self):
-        """!\\brief InputValidator·Arbiter(4 Handler 포함)·OutputPublisher를 실제 객체로 배선한다."""
-        self.inputValidator = InputValidator()
-        self.arbiter = DoorLockArbiter(
-            crashHandler=CrashReleaseHandler(),
-            sensorFaultHandler=SensorFaultHandler(),
-            approachRiskHandler=ApproachRiskHandler(),
-            defaultHandler=DefaultHandler(),
-        )
-        self.actuatorPort = InMemoryActuatorPort()
-        self.outputPublisher = OutputPublisher(self.actuatorPort)
-
-    def runOneCycle(self, raw: RawVehicleSignal, nowMs: int):
+    def runOneCycle(self, raw, nowMs):
         """!
         \\brief 한 평가주기 전체(IF-INT-001 -> IF-INT-002 -> IF-INT-003)를 실행한다.
         \\return 액추에이터 포트에 실제로 적용된 LockDecision.
         """
-        validatedSignal = self.inputValidator.getValidatedSignal(raw, nowMs)
-        decision = self.arbiter.evaluate(validatedSignal)
-        self.outputPublisher.publish(decision)
-        return self.actuatorPort.lastApplied
-
-
-def makeFreshRawSignal(
-    crashStatusRaw="NONE", leftRaw=False, rightRaw=False, faultRaw=False, nowMs=1000
-):
-    """!\\brief 전 필드가 신선한(age=0) RawVehicleSignal을 만드는 헬퍼(테스트 유틸리티)."""
-    return RawVehicleSignal(
-        crashStatusRaw=crashStatusRaw, crashStatusTimestampMs=nowMs,
-        approachRiskLeftRaw=leftRaw, approachRiskLeftTimestampMs=nowMs,
-        approachRiskRightRaw=rightRaw, approachRiskRightTimestampMs=nowMs,
-        sensorFaultRaw=faultRaw, sensorFaultTimestampMs=nowMs,
-    )
+        return self.runCycle(raw, nowMs)
 
 
 class TestFullPipelineIntegration(unittest.TestCase):

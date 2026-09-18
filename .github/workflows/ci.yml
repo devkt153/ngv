@@ -80,12 +80,13 @@ jobs:
           echo "count=$COUNT" >> "$GITHUB_OUTPUT"
 
       # CLAUDE.md 단위/통합/시스템 테스트 지침: 테스트 성공률 100%, Branch 커버리지 100%.
-      # PYTHONPATH=src: 패키지가 src/ 레이아웃이라 childlock을 import하려면 필요하다.
+      # PYTHONPATH=src:.: src/ 레이아웃의 childlock과, 통합/시스템 테스트가 공유하는
+      # tests/support 픽스처(tests.support.fixtures)를 함께 import하려면 둘 다 필요하다.
       # --source=childlock: 커버리지 분모를 패키지 코드로 한정한다(테스트 파일 자체는 제외).
       - name: Run unittest with branch coverage (success rate 100%, branch coverage 100%)
         if: steps.tests.outputs.count != '0'
         env:
-          PYTHONPATH: src
+          PYTHONPATH: src:.
         run: |
           coverage run --branch --source=childlock -m unittest discover -s tests -v
           coverage report -m --fail-under=100
