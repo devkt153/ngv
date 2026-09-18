@@ -390,3 +390,52 @@ Auto Mode의 분류기가 이 push를 계속 차단하고 있습니다(사유: O
 ## 2026-09-18 10:33:11 — User
 
 커밋 푸시해
+
+## 2026-09-18 10:33:36 — Claude
+
+이번엔 push가 정상적으로 성공했습니다. `44d38c7..0d05e88`로 `origin/main`에 반영 완료 — 이전 architecture-designer 커밋과 이번 detailed-designer 커밋(`0d05e88`) 모두 원격에 올라갔습니다.
+
+## 2026-09-18 10:43:51 — User
+
+구현에 대한 서브 에이전트와 스킬도 만들어줘. @CLAUDE.md 의 구현지침을 준수하는 스킬을 생성해.
+
+## 2026-09-18 10:46:41 — Claude
+
+`coding` 서브에이전트와 스킬 두 개를 만들었습니다.
+
+**`.claude/skills/tdd/SKILL.md`** — CLAUDE.md가 요구하는 "TDD 스킬"을 별도로 분리: Red(실패 테스트 먼저) → Green(최소 구현) → Refactor(품질지표 재확인) 순서를 강제하고, 한 번에 하나의 테스트만 다루기·리팩토링 중 기능 추가 금지 등 완화 불가 규칙 포함.
+
+**`.claude/skills/coding/SKILL.md`** — CLAUDE.md 구현지침을 그대로 체크리스트화:
+- §0 선행확인: 상세설계(`TPL-SWE3-001`) 근거 없이는 구현 시작 안 함
+- §1 환경: Python 3.14, unittest 전용, 순환복잡도/라인수 측정용 오픈소스 도구는 임의로 정하지 않고 사용자 확인 후 사용
+- §2: 구현 전 반드시 `tdd` 스킬 호출
+- §3 품질지표(원문 그대로, 완화 불가): 함수 라인수 ≤50, 순환복잡도 ≤10, 중복코드 7라인까지 허용, Doxygen 주석 20%↑, 함수/변수명 3자↑ camelCase(PEP8 snake_case보다 프로젝트 정책 우선임을 명시)
+- §5 추적성: `TPL-TRC-001`에 코드 산출물 연결
+- §6 완료 조건 체크리스트
+
+**`.claude/agents/coding.md`** — 이름을 CLAUDE.md에 명시된 그대로 `coding`으로 맞췄고, `Bash` 도구를 부여해 실제로 unittest와 측정 도구를 실행해 수치를 검증하도록 했습니다(추정 금지). 절차상 상세설계 확인 → TDD 사이클 → 품질지표 실측 → 인터페이스 준수 → 추적성 갱신 → 완료 체크리스트 순으로 진행합니다.
+
+이제 requirements-analyst → architecture-designer → detailed-designer → coding(+tdd)까지 분석-설계-구현 흐름이 CLAUDE.md 지침대로 갖춰졌습니다. 커밋·푸시할까요?
+
+## 2026-09-18 11:27:21 — User
+
+TDD 스킬을 다음 링크의 TDD 스킬로 변경해줘. 단, 기존 스킬에서 반영할 부분은 적용해줘. https://github.com/obra/superpowers 그리고 테스트 코드를 작성할 때, 사용한 기법, 긍정/부정 케이 여부, 테스트 함수에도 Doxygen 형식의 테스트 목적을 포함한 설명을 작성하도록 설정해줘.
+
+## 2026-09-18 11:33:02 — Claude
+
+`tdd` 스킬을 `obra/superpowers`의 `test-driven-development` 스킬 기준으로 교체하고, 요청하신 사항을 반영했습니다.
+
+**`.claude/skills/tdd/SKILL.md`** (재작성):
+- 원본의 핵심 구조를 Python/unittest용으로 각색: 철칙("실패하는 테스트 없이 프로덕션 코드 금지"), RED(작성)→Verify RED(직접 실행해 실패 확인, 생략 불가)→GREEN(최소 구현)→Verify GREEN(직접 실행해 통과 확인)→REFACTOR, 좋은/나쁜 예시, 합리화 반박표, 위험 신호, 막혔을 때 표, 최종 규칙까지 반영.
+- 기존 스킬에서 유효했던 부분은 유지: §0 착수 전 상세설계 계약 확인, §6 사이클 보고 형식(coding 스킬 연계).
+- **§5(신규)**: 모든 테스트 함수 docstring에 Doxygen 스타일 `\brief`(목적) / `\technique`(사용 기법 — 동등분할·경계값분석·오류추정·상태전이·결정테이블·페어와이즈·예외경로 등) / `\case`(긍정/부정) 태그를 필수로 기재하도록 규정. 경계값·예외 경로마다 부정 케이스 최소 1개 필수.
+
+**`.claude/skills/tdd/writing-good-tests.md`** (신규): 원본의 companion 참고문서(mock 사용 원칙, 변경 감지기 금지, 뮤테이션 체크 등)를 Python 예시로 각색해 함께 배치 — SKILL.md에서 필요 시 로드하도록 링크.
+
+**연계 수정**: `coding` 스킬 §6 완료 체크리스트와 출력 형식에 "테스트별 기법/케이스" 항목을 추가하고, `coding.md` 에이전트 절차 4단계에도 이 Doxygen 태그 요구사항을 명시해 두 스킬이 어긋나지 않게 했습니다.
+
+커밋·푸시할까요?
+
+## 2026-09-18 11:34:16 — User
+
+커밋하고 푸시해
