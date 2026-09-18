@@ -65,10 +65,12 @@ jobs:
           pylint --disable=all --enable=invalid-name \
             --function-naming-style=camelCase --method-naming-style=camelCase \
             --variable-naming-style=camelCase --argument-naming-style=camelCase \
+            --attr-naming-style=camelCase \
             --function-rgx='^[a-z][a-zA-Z0-9]{2,}$' \
             --method-rgx='^[a-z][a-zA-Z0-9]{2,}$' \
             --variable-rgx='^[a-z][a-zA-Z0-9]{2,}$' \
             --argument-rgx='^[a-z][a-zA-Z0-9]{2,}$' \
+            --attr-rgx='^[a-z][a-zA-Z0-9]{2,}$' \
             $(git ls-files '*.py')
 
       - name: Detect unittest files
@@ -78,10 +80,14 @@ jobs:
           echo "count=$COUNT" >> "$GITHUB_OUTPUT"
 
       # CLAUDE.md 단위/통합/시스템 테스트 지침: 테스트 성공률 100%, Branch 커버리지 100%.
+      # PYTHONPATH=src: 패키지가 src/ 레이아웃이라 childlock을 import하려면 필요하다.
+      # --source=childlock: 커버리지 분모를 패키지 코드로 한정한다(테스트 파일 자체는 제외).
       - name: Run unittest with branch coverage (success rate 100%, branch coverage 100%)
         if: steps.tests.outputs.count != '0'
+        env:
+          PYTHONPATH: src
         run: |
-          coverage run --branch -m unittest discover -v
+          coverage run --branch --source=childlock -m unittest discover -s tests/unit -v
           coverage report -m --fail-under=100
 
       - name: No Python files yet
