@@ -1,0 +1,5 @@
+# 품질 게이트/테스트 도구 (coding·tdd 스킬, .github/workflows/ci.yml에서 사용)
+coverage>=7
+flake8>=7
+flake8-functions>=0.1.0
+pylint>=3

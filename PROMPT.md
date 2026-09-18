@@ -532,3 +532,36 @@ Git 브랜치 정책과 GitHub Actions CI를 설정했습니다.
 ## 2026-09-18 14:04:29 — User
 
 커밋 푸시해줘
+
+## 2026-09-18 14:05:09 — Claude
+
+커밋(`2219efc`)하고 `origin/main`에 푸시까지 완료했습니다(`d8cf2cf..2219efc`).
+
+브랜치 보호 규칙 자체는 여전히 GitHub 저장소 설정으로 별도 적용이 필요합니다 — `.github/BRANCH_POLICY.md`에 적용 방법을 남겨뒀으니, `! gh auth login`으로 인증해 주시면 이어서 적용해 드리겠습니다.
+
+## 2026-09-18 14:14:29 — User
+
+@templates/OEM_Sample/OEM-SWR-001_OEM SW 요구사항 사양서.docx  는 고객 요구사양서야. 이 사양서를 기반으로 우리 소프트웨어를 개발할 예정이야. CLAUDE.md와 같이 A-SPICE 기준으로 분석-설계-구현-테스트의 과정을 거치고 산출물을 작성해야 해.
+요구사양서를 분석하고 작업 계획을 제시해줘. 네가 제시한 각 phase 마다 분석~테스트 단계를 거쳐야해. 한 단계가 끝날 때마다 내가 리뷰하고, 리뷰를 승인하면 Git에 Merge해줘. 내가 확인해줘야 하는 것은 한 번에 문의해줘.
+
+## 2026-09-18 14:25:41 — Claude
+
+`chore/repo-scaffolding` 브랜치에 Phase 0(저장소 스캐폴딩)을 커밋했습니다(`a2b2f5a`). 병합 전에 리뷰해 주세요.
+
+**생성된 구조:**
+- `src/childlock/`, `tests/{unit,integration,system}/` — 아직 빈 디렉터리(`.gitkeep`)
+- `deliverables/` — SWR-001~003, SWA-001/002, SWD-001/002, INT-001~003, VER-001/002 (해당 WP 템플릿을 그대로 복사한 리비전 0.1 상태, 아직 내용 없음)
+- `traceability/TRC-001_양방향 요구사항 추적 매트릭스.xlsx` — 마찬가지로 템플릿 그대로
+- `.python-version`("3.14"), `requirements.txt`(빈 런타임 의존성), `requirements-dev.txt`(coverage/flake8/flake8-functions/pylint)
+- `.gitignore`에 Python 관련 항목(`__pycache__/`, `.coverage`, `venv/` 등) 추가
+
+**확인해 주세요:**
+1. `deliverables/`·`traceability/` 폴더 구조와 파일명이 계획과 일치하는지
+2. `requirements-dev.txt`의 도구 버전 범위가 적절한지
+3. 이 상태로 `main`에 병합해도 되는지
+
+승인하시면 `main`으로 병합하고 Phase 1의 1단계(요구사항분석, SWR-005/006/007/008/009/013/021 — OEM-SR-001~004)를 `requirements-analyst` 서브에이전트로 시작하겠습니다.
+
+## 2026-09-18 14:31:14 — User
+
+승인, main에 병합해줘
