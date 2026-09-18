@@ -1,0 +1,93 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality-and-test:
+    name: Quality gates + unittest (branch coverage)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.14
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+
+      - name: Install project dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+
+      - name: Install quality-gate tools
+        run: pip install "flake8" "flake8-functions" "pylint" "coverage"
+
+      - name: Detect Python source files
+        id: py
+        run: |
+          COUNT=$(git ls-files '*.py' | wc -l)
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+
+      # CLAUDE.md 구현지침: 함수 순환복잡도 <= 10.
+      # CLAUDE.md 구현지침: 함수 라인수(순수 코드) <= 50 — flake8-functions(CFQ001)는 docstring/공백을
+      # 포함한 총 물리 라인 수를 세므로, Doxygen 주석(주석비율 >=20% 요구)까지 감안해 70라인으로
+      # 여유를 둔 근사치 게이트다. "순수 코드라인 <=50"의 최종 판정은 coding 스킬의 자체 점검을 따른다.
+      - name: Cyclomatic complexity (<=10) & function length proxy (<=70 total lines)
+        if: steps.py.outputs.count != '0'
+        run: |
+          flake8 --select=C901,CFQ001 --max-complexity=10 --max-function-length=70 \
+            $(git ls-files '*.py')
+
+      # CLAUDE.md 구현지침: 중복 코드는 7라인까지 허용(8라인 이상 금지).
+      # 실측 결과 pylint --min-similarity-lines=N 은 (N+1)라인 이상부터 검출하므로,
+      # 8라인 이상을 검출하려면 N=7로 설정해야 한다.
+      - name: Duplicate code (>7 lines flagged)
+        if: steps.py.outputs.count != '0'
+        run: |
+          pylint --disable=all --enable=duplicate-code --min-similarity-lines=7 \
+            $(git ls-files '*.py')
+
+      # CLAUDE.md 구현지침: 함수명/변수명 3글자 이상 + 낙타표기법(camelCase).
+      - name: Naming convention (camelCase, >=3 chars)
+        if: steps.py.outputs.count != '0'
+        run: |
+          pylint --disable=all --enable=invalid-name \
+            --function-naming-style=camelCase --method-naming-style=camelCase \
+            --variable-naming-style=camelCase --argument-naming-style=camelCase \
+            --function-rgx='^[a-z][a-zA-Z0-9]{2,}$' \
+            --method-rgx='^[a-z][a-zA-Z0-9]{2,}$' \
+            --variable-rgx='^[a-z][a-zA-Z0-9]{2,}$' \
+            --argument-rgx='^[a-z][a-zA-Z0-9]{2,}$' \
+            $(git ls-files '*.py')
+
+      - name: Detect unittest files
+        id: tests
+        run: |
+          COUNT=$(git ls-files | grep -E '(^|/)test_.*\.py$|_test\.py$' | wc -l)
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+
+      # CLAUDE.md 단위/통합/시스템 테스트 지침: 테스트 성공률 100%, Branch 커버리지 100%.
+      - name: Run unittest with branch coverage (success rate 100%, branch coverage 100%)
+        if: steps.tests.outputs.count != '0'
+        run: |
+          coverage run --branch -m unittest discover -v
+          coverage report -m --fail-under=100
+
+      - name: No Python files yet
+        if: steps.py.outputs.count == '0'
+        run: echo "::notice::Python 소스 파일이 아직 없어 정적 품질 게이트를 건너뜁니다."
+
+      - name: No unittest files yet
+        if: steps.tests.outputs.count == '0'
+        run: echo "::notice::테스트 파일(test_*.py / *_test.py)이 아직 없어 테스트·커버리지 게이트를 건너뜁니다."

@@ -34,3 +34,27 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - 중복 코드는 7라인까지 허용한다.
   - 주석은 Doxygen 방식으로 작성하며, 20%이상 작성해야 한다.
 - 함수명, 변수명은 3글자 이상 사용하고, 낙타표기법을 활용한다.
+
+### 통합시험 지침
+
+- 소프트웨어 통합 및 통합시험(A-SPICE SWE.5) 수행은 integration-tester 서브에이전트가 담당하며, integration-tester 스킬을 사용한다.
+- 테스트 베이시스는 아키텍처 설계서(architecture-designer 산출물)의 인터페이스 정의와 통합 순서이며, 이 순서를 벗어나 임의로 통합하지 않는다.
+- 구조적 커버리지 지표인 함수 커버리지와 Call 커버리지는 **반드시** 100%를 달성해야 한다.
+
+### 시스템 테스트 지침
+
+- SW 시스템 테스트 케이스 개발(A-SPICE SWE.6)은 sw-system-tester 서브에이전트가 담당하며, sw-system-test 스킬을 사용한다.
+- 테스트 베이시스는 SW 요구사항 명세서(requirements-analyst 산출물)이며, 단위시험(SWE.4)·통합시험(SWE.5)의 시험기법·커버리지 기준과는 별개의 요구사항 기반 블랙박스 테스트임을 구분한다.
+- 시스템 테스트는 sw-system-tester가 수행한다.
+- 테스트 성공률은 100%여야 한다.
+
+### 단위 테스트 지침
+
+- 단위 테스트는 TDD로 대체한다.
+- 단위 테스트는 Branch 커버리지 100%를 달성해야 한다.
+- 테스트 성공률은 100%여야 한다.
+
+### 통합 테스트 지침
+
+- 통합 테스트는 integration-tester가 수행한다.
+- 테스트 성공률은 100%여야 한다.

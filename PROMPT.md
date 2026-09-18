@@ -439,3 +439,96 @@ TDD 스킬을 다음 링크의 TDD 스킬로 변경해줘. 단, 기존 스킬에
 ## 2026-09-18 11:34:16 — User
 
 커밋하고 푸시해
+
+## 2026-09-18 11:35:16 — Claude
+
+커밋(`d8cf2cf`)하고 `origin/main`에 푸시까지 완료했습니다.
+
+## 2026-09-18 13:13:42 — User
+
+소프트웨어 통합 테스트를 위한 서브에이전트와 스킬 생성해줘. 테스트 기법은 ISO26262 Part 6에 근거하고, 함수 커버리지 및 Call 커버리지는 100%달성해줘. 테스트 베이시스인 아키텍처 설계서의 인터페이스와 통합 순서에 근거해서 테스트 진행하도록 해줘.
+
+## 2026-09-18 13:16:09 — Claude
+
+`.claude/skills/integration-tester/SKILL.md`와 `.claude/agents/integration-tester.md`를 만들었습니다.
+
+핵심 구성 (A-SPICE SWE.5 + ISO 26262 Part 6 Clause 10 기준):
+- **§0 템플릿**: `TPL-SWE5-001`(통합전략/명세서), `TPL-SWE5-002`(케이스), `TPL-SWE5-003`(결과서), `TPL-TRC-001` 실제 경로 지정. 테스트 베이시스로 아키텍처(`TPL-SWE2-001`)·상세설계(`TPL-SWE3-001`)·단위시험 결과(`TPL-SWE4-002`)를 참조만 하도록 구분.
+- **§2 테스트 베이시스 확보**: 통합시험은 반드시 확정된 아키텍처 설계서의 인터페이스(§5)와 통합 순서(§6)를 근거로 하며, 아키텍처가 없으면 진행하지 않고 architecture-designer 산출물을 먼저 요구 — 앞 단계 스킬과 체인으로 연결.
+- **§3 통합 순서 준수**: 아키텍처가 정의한 위상 정렬 순서를 임의로 바꾸지 못하게 강제, 단계별 완료 판정 기준 명시.
+- **§4 시험기법**: ISO 26262-6 기반 요구사항 기반/인터페이스/결함주입/자원사용/백투백(해당 시) 시험을 명시적으로 선택·기록하도록 함.
+- **§5 구조적 커버리지 (완화 불가)**: 함수 커버리지·Call 커버리지 **100%**를 오픈소스 도구로 실측(추정 금지), 미달 시 케이스 추가, 도달불가 코드로 인한 예외는 사용자 승인 필수로 제한.
+- **§6~8**: 시험 케이스 설계(긍정/부정 구분 포함), 시험 수행/결과, 추적성·일관성(미검증 인터페이스/고아 케이스 점검).
+
+이제 requirements-analyst → architecture-designer → detailed-designer → coding(+tdd) → integration-tester까지 SWE.1~SWE.5 흐름이 갖춰졌습니다. 커밋·푸시할까요?
+
+## 2026-09-18 13:24:38 — User
+
+새로 추가한 서브에이전트와 스킬 인식해줘. 서브에이전트와 각 서브에이전트에서 사용하는 스킬의 경계를 명확히 정리해줘. 서로 중복되는 내용이 없도록 만들어.
+
+## 2026-09-18 13:29:43 — Claude
+
+Every agent description now names its exact SWE process and, where relevant, explicitly excludes the neighboring stages. Here's the full picture I've established:
+
+| SWE 단계 | 서브에이전트 | 사용 스킬 | 테스트 베이시스 / 입력 | 산출물 템플릿 |
+|---|---|---|---|---|
+| SWE.1 요구사항 분석 | requirements-analyst | requirements-analyst | (사용자 요구) | TPL-SWE1-001/002/003 |
+| SWE.2 아키텍처 설계 | architecture-designer | architecture-designer | 요구사항 명세서 | TPL-SWE2-001/002 |
+| SWE.3 상세설계 | detailed-designer | detailed-designer | 아키텍처 설계서 | TPL-SWE3-001/002 |
+| SWE.3 구현 + 단위테스트 | coding | coding, tdd | 상세설계서 | 소스코드 + `TPL-TRC-001` 갱신 |
+| SWE.5 통합시험 | integration-tester | integration-tester | 아키텍처 설계서(인터페이스·통합 순서) | TPL-SWE5-001/002/003 |
+| SWE.6 시스템 테스트 | sw-system-tester | sw-system-test | 요구사항 명세서 | TPL-SWE6-001/002 |
+| (전 단계 공통) 감사 | aspice-cl2-auditor | aspice-cl2-auditor | 임의 산출물 | — (CL2 GP 체크리스트) |
+
+수정한 내용:
+- **`sw-system-test`/`sw-system-tester`**: "A-SPICE SWE.4/5/6" 전체를 관할한다던 서술을 **SWE.6만**으로 좁히고, ISO 26262 인용을 "Part 6 전체"에서 **Clause 11**로 구체화했습니다. 다른 모든 파이프라인 스킬처럼 실제 템플릿(입력 `TPL-SWE1-001/002`, 출력 `TPL-SWE6-001/002`)과 `TPL-TRC-001` 추적성 갱신을 명시했고, 이전엔 아예 없던 이 부분을 새로 추가했습니다. "테스트 커버리지 목표"라는 모호한 표현은 **요구사항 커버리지(100%)**로 명확히 하고, `integration-tester`의 구조적 코드 커버리지(함수/Call)와 다른 개념임을 명시했습니다.
+- **`integration-tester`, `coding`, `tdd`**: 각 스킬 상단에 "역할 범위" 문장을 추가해, 서로가 서로의 영역(단위/통합/시스템 테스트)을 대신 수행하지 않도록 상호 참조를 명시했습니다.
+- **`CLAUDE.md`**: 기존 분석/아키텍처설계/구현지침과 같은 형식으로 **통합시험 지침**, **시스템 테스트 지침** 섹션을 추가해, 프로젝트 정책 레벨에서도 담당 서브에이전트가 명확히 지정되도록 했습니다.
+
+커밋·푸시할까요?
+
+## 2026-09-18 13:35:12 — User
+
+@CLAUDE.md의 지침이 수정되었어. 반영해서 작업해줘.
+
+## 2026-09-18 13:41:10 — Claude
+
+알겠습니다. 커밋은 나중에 검토 후 요청해 주세요. 지금까지 반영한 내용 요약입니다:
+
+- **`tdd` 스킬**: 새 절 "커버리지 및 테스트 성공률" 추가 — Branch 커버리지 100%(`coverage.py --branch`로 실측), 테스트 성공률 100%(전체 unittest 실패/에러 0건). REFACTOR 단계 재확인 항목과 완료 체크리스트에도 반영.
+- **`coding` 스킬/에이전트**: 같은 지표를 `tdd` 스킬 기준을 그대로 따르도록 연계(중복 정의 없이 참조만), 도구 목록에 `coverage.py` 추가, 완료 체크리스트·출력 형식 표에 두 지표 추가.
+- **`integration-tester` 스킬/에이전트**: 기존 "함수/Call 커버리지 100%" 옆에 "테스트 성공률 100%"라는 CLAUDE.md와 동일한 용어를 명시하고, fail 시 결함 처리·재시험 절차를 추가.
+- **`sw-system-test`/`sw-system-tester`**: 이전엔 없던 "완료 판정 — 테스트 성공률 100%" 절을 신설해, 요구사항 커버리지(케이스 존재 여부)와 성공률(케이스 통과 여부)을 구분하고 둘 다 100%가 되어야 완료로 보도록 명시.
+
+파일 상태는 모두 디스크에 반영되어 있고(`git status`로 확인됨), 커밋은 보류된 상태입니다. 검토 후 준비되시면 말씀해 주세요.
+
+## 2026-09-18 13:41:15 — User
+
+Git의 브랜치 정책을 적용해줘.
+일반적으로 AI를 활용한 바이브 코딩을 이용해서 GitHub를 사용했을 때 적용되는 정책으로 해줘.
+Action을 설정해줘.
+PR이 진행될 때, Action을 실행해서 지속적 통합과 지속적 테스트를 수행해줘.
+
+## 2026-09-18 13:46:41 — Claude
+
+Git 브랜치 정책과 GitHub Actions CI를 설정했습니다.
+
+**`.github/workflows/ci.yml`** — PR이 열리거나 갱신될 때(및 `main` push, 수동 실행) 자동으로 실행되는 CI:
+- 순환복잡도 ≤10 (`flake8`+mccabe, `C901`) — 실제 검증 완료
+- 함수 길이 게이트 (`flake8-functions`, `CFQ001`) — CLAUDE.md의 "순수 코드라인 ≤50"을 근사하되, 이 플러그인은 docstring/공백까지 센 총 물리 라인 수를 세기 때문에 Doxygen 주석 분량을 감안해 70라인으로 여유를 뒀습니다. 정확한 "순수 코드라인 ≤50" 최종 판정은 `coding` 스킬의 자체 점검이 담당합니다.
+- 중복 코드 8라인 이상 검출 (`pylint --min-similarity-lines=7` — 실측으로 확인: 이 옵션은 N+1라인부터 검출되므로 7로 설정해야 8라인 중복이 잡힙니다)
+- 네이밍 규칙: 함수/메서드/변수/인자 3자 이상 + camelCase (`pylint` naming-style, 실측 확인)
+- `unittest` 전체 스위트 + `coverage --branch` 실행, `--fail-under=100`으로 Branch 커버리지 100%·테스트 성공률 100% 강제
+- 아직 Python 코드/테스트가 없는 초기 PR에서는 해당 게이트를 건너뛰고 notice만 남기도록 처리(부트스트래핑 배려)
+
+주석 비율(Doxygen 20%+)을 정확히 재는 표준 오픈소스 도구는 없어서 CI에는 넣지 않았습니다 — 이 항목은 여전히 `coding`/`tdd` 스킬의 자체 점검에 의존합니다.
+
+**`.github/BRANCH_POLICY.md`** — 브랜치 모델(`main` 보호 + `feature/`·`fix/`·`chore/`·`docs/` 작업 브랜치), PR 필수·직접 push 금지, CI 통과 필수(Required status check), squash merge, 병합 후 브랜치 자동 삭제, force-push/삭제 금지 등을 정리했습니다.
+
+**중요 — 하나는 제가 완료하지 못했습니다**: 브랜치 보호 규칙은 GitHub 저장소 설정(API)으로 적용해야 실제로 강제되는데, 이 환경에 `gh` CLI가 설치/인증되어 있지 않아 직접 적용할 수 없었습니다. `BRANCH_POLICY.md`에 웹 UI로 설정하는 방법과, `gh auth login` 후 실행할 수 있는 정확한 `gh api`/`gh repo edit` 명령을 적어뒀습니다. 터미널에서 `! gh auth login`으로 인증해 주시면 제가 이어서 적용해 드릴 수 있습니다.
+
+커밋은 요청하신 대로 보류 상태입니다 — 이전 항목들과 함께 준비되면 말씀해 주세요.
+
+## 2026-09-18 14:04:29 — User
+
+커밋 푸시해줘
