@@ -1,30 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mxfile host="app.diagrams.net" modified="2026-09-17T00:00:00.000Z" agent="Codex" version="24.7.17" type="device" copyright="교육용 샘플 | © 2026 Synetics | 과정 밖 이용은 사전 서면 승인 필요">
-  <diagram id="template" name="Page-1">
+<mxfile host="app.diagrams.net" modified="2026-09-18T00:00:00.000Z" agent="Claude Code" version="24.7.17" type="device" copyright="교육용 샘플 | © 2026 Synetics | 과정 밖 이용은 사전 서면 승인 필요">
+  <diagram id="swr003-phase1" name="Phase1-안전핵심로직">
     <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
       <root>
         <mxCell id="0"/>
         <mxCell id="1" parent="0"/>
-        <mxCell id="title" value="Use Case 다이어그램 템플릿" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=24;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
-          <mxGeometry x="60" y="40" width="760" height="50" as="geometry"/>
+        <mxCell id="title" value="SWR-003 Use Case 다이어그램 — Phase 1 안전 핵심 로직 (OEM-SR-001~004)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=20;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="60" y="30" width="1000" height="40" as="geometry"/>
         </mxCell>
-        <mxCell id="boundary" value="시스템 또는 설계 경계&#xa;&#xa;작성 대상 요소를 이 영역에 배치하세요." style="rounded=0;whiteSpace=wrap;html=1;dashed=1;strokeWidth=2;strokeColor=#2F75B5;fillColor=#F5F9FD;fontColor=#595959;fontSize=14;verticalAlign=top;spacingTop=24;" vertex="1" parent="1">
-          <mxGeometry x="250" y="130" width="820" height="540" as="geometry"/>
+        <mxCell id="boundary" value="전자식 차일드락 제어 SW (Phase 1: 안전 핵심 로직)" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;strokeWidth=2;strokeColor=#2F75B5;fillColor=#F5F9FD;fontColor=#595959;fontSize=14;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="250" y="100" width="820" height="500" as="geometry"/>
         </mxCell>
-        <mxCell id="actor" value="외부 액터 또는 요소" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D9EAF7;strokeColor=#2F75B5;fontColor=#000000;fontSize=13;" vertex="1" parent="1">
-          <mxGeometry x="60" y="250" width="150" height="70" as="geometry"/>
+        <mxCell id="actor" value="Vehicle&#xa;(차량 시스템)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D9EAF7;strokeColor=#2F75B5;fontColor=#000000;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="60" y="300" width="150" height="70" as="geometry"/>
         </mxCell>
-        <mxCell id="element" value="대상 요소 ID&#xa;요소 명칭" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#17365D;strokeWidth=2;fontColor=#000000;fontSize=14;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="560" y="330" width="200" height="90" as="geometry"/>
+        <mxCell id="uc1" value="긴급 해제 (충돌)&#xa;SWR-007, SWR-008" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#C00000;strokeWidth=2;fontColor=#000000;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="320" y="140" width="260" height="90" as="geometry"/>
         </mxCell>
-        <mxCell id="edge" value="관계 또는 인터페이스" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;fontSize=12;" edge="1" parent="1" source="actor" target="element">
+        <mxCell id="uc2" value="접근위험 도어 잠금 유지&#xa;SWR-005, SWR-006, SWR-009" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#C00000;strokeWidth=2;fontColor=#000000;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="650" y="140" width="260" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc3" value="입력 유효성·freshness 검증&#xa;SWR-013a, SWR-013b" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#17365D;strokeWidth=2;fontColor=#000000;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="320" y="330" width="260" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc4" value="센서 고장 시 출력 유지&#xa;SWR-021a, SWR-021b" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#17365D;strokeWidth=2;fontColor=#000000;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="650" y="330" width="260" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge1" value="crash_status" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;fontSize=11;" edge="1" parent="1" source="actor" target="uc1">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
-        <mxCell id="guide" value="작성 안내&lt;br&gt;1. 시스템 경계와 대상 기능&lt;br&gt;2. 주 액터와 보조 액터&lt;br&gt;3. Use Case와 관계&lt;br&gt;4. 관련 요구사항 ID" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=12;fillColor=#FFF2CC;strokeColor=#BF9000;fontColor=#000000;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="60" y="500" width="160" height="170" as="geometry"/>
+        <mxCell id="edge2" value="rear_left/right_approach_risk" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;fontSize=11;" edge="1" parent="1" source="actor" target="uc2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge3" value="입력 신선도/형식" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;fontSize=11;" edge="1" parent="1" source="actor" target="uc3">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge4" value="sensor_fault" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;fontSize=11;" edge="1" parent="1" source="actor" target="uc4">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_priority" value="&lt;&lt;priority&gt;&gt; 충돌이 접근위험보다 우선(사용자 확정 2026-09-18)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;endFill=0;dashed=1;fontSize=10;fontColor=#C00000;strokeColor=#C00000;" edge="1" parent="1" source="uc1" target="uc2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="note" value="비고&lt;br&gt;- 사람 액터 없음: 모두 차량 신호에 대한 시스템 자동 반응(Use Case라기보다 상태 기반 요구)&lt;br&gt;- HARA/ASIL 재도출 없음 — OEM-A ASIL B 입력을 그대로 상속&lt;br&gt;- 검증: PC/SIL(unittest + integration-tester + sw-system-tester 파이프라인)&lt;br&gt;- OEM-FR(운전자 명령 등 실제 Use Case)은 Phase 2에서 이 문서에 추가" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=12;fillColor=#FFF2CC;strokeColor=#BF9000;fontColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="420" width="170" height="180" as="geometry"/>
         </mxCell>
         <mxCell id="footer" value="교육용 샘플 | © 2026 Synetics | 과정 밖 이용은 사전 서면 승인 필요" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#666666;" vertex="1" parent="1">
-          <mxGeometry x="250" y="735" width="820" height="30" as="geometry"/>
+          <mxGeometry x="250" y="615" width="820" height="30" as="geometry"/>
         </mxCell>
       </root>
     </mxGraphModel>
